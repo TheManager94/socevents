@@ -1,0 +1,888 @@
+<?php
+// SOC Events Website - PHP Version
+// Compatible with any PHP-enabled web hosting
+
+// You can add PHP functionality here, such as:
+// - Contact form processing
+// - Database integration for events
+// - Admin panel for managing events
+// - User registration/login
+
+$currentYear = date('Y');
+$siteTitle = "SOC Events - Entdecke unsere Events";
+$siteDescription = "Entdecke die besten Events und kaufe deine Tickets online bei SOC Events";
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $siteTitle; ?></title>
+    <meta name="description" content="<?php echo $siteDescription; ?>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav {
+                padding: 1.5rem 2rem;
+            }
+        }
+
+        .nav-logo {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        @media (min-width: 768px) {
+            .nav-logo {
+                font-size: 1.25rem;
+            }
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-menu {
+                gap: 2rem;
+            }
+        }
+
+        .nav-links {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .nav-button:hover {
+            color: #d1d5db;
+        }
+
+        .search-btn {
+            background: #bfdbfe;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .search-btn:hover {
+            background: #93c5fd;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 64rem;
+            padding: 0 1rem;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+
+        @media (min-width: 768px) {
+            .hero-title {
+                font-size: 4rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .hero-title {
+                font-size: 4.5rem;
+            }
+        }
+
+        .hero-btn {
+            background: #a3e635;
+            color: #000;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 9999px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .hero-btn:hover {
+            background: #84cc16;
+        }
+
+        /* Events Section */
+        .events-section {
+            padding: 4rem 1rem;
+        }
+
+        .events-container {
+            max-width: 72rem;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .section-title {
+                font-size: 3rem;
+            }
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .events-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .event-card {
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .event-card-blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .event-card-green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .event-card-red {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .past-event {
+            opacity: 0.6;
+        }
+
+        .past-event:hover {
+            opacity: 0.8;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .event-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .event-status {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .event-image {
+            width: 100%;
+            height: 12rem;
+            object-fit: cover;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .past-event .event-image {
+            filter: grayscale(100%);
+        }
+
+        .event-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .event-subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .event-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .event-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1.125rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #a3e635;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #84cc16;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-dark {
+            background: #000;
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background: #374151;
+        }
+
+        .btn-disabled {
+            background: #6b7280 !important;
+            color: #d1d5db !important;
+            cursor: not-allowed !important;
+        }
+
+        .btn-disabled:hover {
+            background: #6b7280 !important;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #1f2937;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid #374151;
+            width: 95%;
+            max-width: 48rem;
+            color: white;
+            max-height: 95vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a3e635;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-description {
+            color: #d1d5db;
+            font-size: 1.125rem;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .modal-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .modal-section h4 {
+            font-weight: 600;
+            color: #a3e635;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-section p {
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-section .label {
+            color: #9ca3af;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .modal-buttons .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 2rem 1rem;
+            border-top: 1px solid #374151;
+        }
+
+        .footer-content {
+            max-width: 72rem;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                text-align: left;
+            }
+        }
+
+        .footer-text {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .footer-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .footer-btn {
+            background: #a3e635;
+            color: #000;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .footer-btn:hover {
+            background: #84cc16;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">SOC EVENTS.DE</div>
+        <div class="nav-menu">
+            <div class="nav-links">
+                <a href="index.php" class="nav-button">Events</a>
+                <a href="tickets.html" class="nav-button">Tickets</a>
+                <a href="faq.html" class="nav-button">FAQ</a>
+                <a href="contact.html" class="nav-button">Contact</a>
+            </div>
+            <button class="search-btn">Search</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Entdecke<br>
+                unsere events
+            </h1>
+            <button class="hero-btn" onclick="scrollToEvents()">
+                Entdecke unsere events
+            </button>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events-section" class="events-section">
+        <div class="events-container">
+            <!-- Upcoming Events -->
+            <div>
+                <h2 class="section-title">Upcoming Events</h2>
+                <div class="events-grid" id="upcoming-events">
+                    <!-- Events will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Past Events -->
+            <div>
+                <h2 class="section-title">Past Events</h2>
+                <div class="events-grid" id="past-events">
+                    <!-- Past events will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                Copyright © <?php echo $currentYear; ?> MEIN SEHR SPC ECHT<br>
+                Enverd Nachtigkent
+            </div>
+            <div class="footer-text">
+                Safe Nachschrift Namig Unvelt Ploeifentrichtsgift<br>
+                wason Fonna.
+            </div>
+            <div class="footer-buttons">
+                <button class="footer-btn">+</button>
+                <button class="footer-btn">+</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-description" id="modalDescription"></div>
+            </div>
+            <div id="modalBody">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Same JavaScript as HTML version
+        // Event data
+        const upcomingEvents = [
+            {
+                id: 1,
+                title: "Booster",
+                subtitle: "2025",
+                venue: "S12",
+                date: "Juho 1.22",
+                price: "553",
+                status: "Art",
+                image: "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=400&q=80",
+                cardType: 'blue',
+                buttonStyle: 'default',
+                description: "Ein unvergessliches Konzert-Erlebnis mit internationalen Künstlern und einer spektakulären Bühnenshow. Freuen Sie sich auf eine Nacht voller Energie, großartiger Musik und unvergesslicher Momente.",
+                fullDate: "1. Juli 2022",
+                startTime: "20:00",
+                endTime: "02:00",
+                category: "Konzert",
+                ageRestriction: "18+",
+                ticketsAvailable: 1250
+            },
+            {
+                id: 2,
+                title: "Italienische",
+                subtitle: "Nacht Iserlohn",
+                venue: "5.0",
+                date: "Luiho 1.20",
+                price: "20",
+                status: "echt",
+                image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80",
+                cardType: 'green',
+                buttonStyle: 'dark',
+                description: "Erleben Sie eine magische italienische Nacht mit authentischer Musik, traditionellem Essen und einer warmen, einladenden Atmosphäre. Perfekt für Familien und Freunde.",
+                fullDate: "1. Juli 2020",
+                startTime: "19:00",
+                endTime: "23:30",
+                category: "Kulturell",
+                ageRestriction: "Alle Altersgruppen",
+                ticketsAvailable: 800
+            },
+            {
+                id: 3,
+                title: "Italienische",
+                subtitle: "Nacht Lüdend",
+                venue: "F&T",
+                date: "Juhre 1.22",
+                price: "49",
+                status: "dgd",
+                image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&q=80",
+                cardType: 'red',
+                buttonStyle: 'light',
+                description: "Eine exklusive italienische Nacht in Lüdenscheid mit Live-Musik, kulinarischen Köstlichkeiten und einer eleganten Atmosphäre. Ein Abend für Genießer.",
+                fullDate: "1. Juli 2022",
+                startTime: "18:30",
+                endTime: "01:00",
+                category: "Gala",
+                ageRestriction: "21+",
+                ticketsAvailable: 300
+            }
+        ];
+
+        const pastEvents = [
+            {
+                id: 4,
+                title: "Summer",
+                subtitle: "Festival 2024",
+                venue: "Stadtpark",
+                date: "Aug 15.24",
+                price: "75",
+                status: "Sold Out",
+                image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=80",
+                cardType: 'blue',
+                buttonStyle: 'default',
+                description: "Ein unvergessliches Sommerfestival mit über 20 Künstlern aus verschiedenen Genres. Drei Tage voller Musik, Kunst und Gemeinschaft unter freiem Himmel.",
+                fullDate: "15. August 2024",
+                startTime: "14:00",
+                endTime: "02:00",
+                category: "Festival",
+                ageRestriction: "16+",
+                ticketsAvailable: 0
+            },
+            {
+                id: 5,
+                title: "Jazz Night",
+                subtitle: "Deluxe",
+                venue: "Blue Note",
+                date: "Sep 22.24",
+                price: "35",
+                status: "Finished",
+                image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&q=80",
+                cardType: 'green',
+                buttonStyle: 'dark',
+                description: "Eine elegante Jazz-Nacht mit lokalen und internationalen Künstlern. Genießen Sie erstklassige Musik in einer intimen und stilvollen Atmosphäre.",
+                fullDate: "22. September 2024",
+                startTime: "19:30",
+                endTime: "23:00",
+                category: "Jazz",
+                ageRestriction: "Alle Altersgruppen",
+                ticketsAvailable: 0
+            },
+            {
+                id: 6,
+                title: "Electronic",
+                subtitle: "Underground",
+                venue: "Warehouse X",
+                date: "Oct 31.24",
+                price: "45",
+                status: "Past",
+                image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80",
+                cardType: 'red',
+                buttonStyle: 'light',
+                description: "Eine intensive elektronische Nacht mit Underground-DJs und einer hypnotischen Lichtshow. Perfekt für Liebhaber von Techno und elektronischer Musik.",
+                fullDate: "31. Oktober 2024",
+                startTime: "22:00",
+                endTime: "06:00",
+                category: "Electronic",
+                ageRestriction: "18+",
+                ticketsAvailable: 0
+            }
+        ];
+
+        // Functions (same as HTML version)
+        function scrollToEvents() {
+            const eventsSection = document.getElementById('events-section');
+            if (eventsSection) {
+                eventsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function createEventCard(event, isPast = false) {
+            const card = document.createElement('div');
+            card.className = `event-card event-card-${event.cardType} ${isPast ? 'past-event' : ''}`;
+
+            const buttonClass = isPast ? 'btn-disabled' :
+                event.buttonStyle === 'dark' ? 'btn-dark' : 'btn-primary';
+
+            const buttonText = isPast ? 'Event Finished' : 'Buy Tickets';
+            const buttonDisabled = isPast ? 'disabled' : '';
+            const onClickHandler = isPast ? '' : `onclick="buyTickets('${event.title}', '${event.subtitle}')"`;
+
+            card.innerHTML = `
+                <div class="event-header">
+                    <span class="event-price">${event.price}</span>
+                    <span class="event-status">${event.status}</span>
+                </div>
+
+                <div>
+                    <img src="${event.image}" alt="${event.title}" class="event-image" loading="lazy">
+                </div>
+
+                <div>
+                    <h3 class="event-title">${event.title}</h3>
+                    <h4 class="event-subtitle">${event.subtitle}</h4>
+                    <div class="event-details">
+                        <span>${event.venue}</span>
+                        <span>${event.date}</span>
+                    </div>
+                </div>
+
+                <div class="event-buttons">
+                    <button class="btn ${buttonClass}" ${buttonDisabled} ${onClickHandler}>
+                        ${buttonText}
+                    </button>
+
+                    <button class="btn btn-secondary" onclick="showMoreInfo(${event.id}, ${isPast})">
+                        More Info
+                    </button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function buyTickets(title, subtitle) {
+            alert(`Redirecting to tickets for ${title} ${subtitle}...`);
+        }
+
+        function showMoreInfo(eventId, isPast) {
+            const event = isPast ?
+                pastEvents.find(e => e.id === eventId) :
+                upcomingEvents.find(e => e.id === eventId);
+
+            if (!event) return;
+
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = `${event.title} ${event.subtitle}`;
+            modalDescription.textContent = `${event.category} • ${event.venue}${isPast ? ' • Vergangenes Event' : ''}`;
+
+            const ticketButtonContent = isPast ?
+                `<button class="btn btn-disabled" disabled>Event Beendet</button>` :
+                `<button class="btn btn-primary" onclick="buyTickets('${event.title}', '${event.subtitle}')">Tickets Kaufen</button>`;
+
+            modalBody.innerHTML = `
+                <img src="${event.image}" alt="${event.title} ${event.subtitle}" class="modal-image" loading="lazy">
+
+                <div class="modal-grid">
+                    <div class="modal-section">
+                        <h4>Event Details</h4>
+                        <p><span class="label">Datum:</span> ${event.fullDate}</p>
+                        <p><span class="label">Zeit:</span> ${event.startTime} - ${event.endTime}</p>
+                        <p><span class="label">Venue:</span> ${event.venue}</p>
+                        <p><span class="label">Kategorie:</span> ${event.category}</p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>${isPast ? 'Event Info' : 'Ticket Info'}</h4>
+                        <p><span class="label">${isPast ? 'Preis war:' : 'Preis:'}</span> €${event.price}</p>
+                        <p><span class="label">${isPast ? 'Status:' : 'Verfügbar:'}</span> ${isPast ? event.status : event.ticketsAvailable + ' Tickets'}</p>
+                        <p><span class="label">Altersfreigabe:</span> ${event.ageRestriction}</p>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Beschreibung</h4>
+                    <p style="color: #d1d5db; line-height: 1.6;">${event.description}</p>
+                </div>
+
+                <div class="modal-buttons">
+                    ${ticketButtonContent}
+                    <button class="btn btn-secondary" onclick="shareEvent('${event.title}', '${event.subtitle}')">
+                        Teilen
+                    </button>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function shareEvent(title, subtitle) {
+            if (navigator.share) {
+                navigator.share({
+                    title: `${title} ${subtitle} - SOC Events`,
+                    text: `Check out this event: ${title} ${subtitle}`,
+                    url: window.location.href
+                });
+            } else {
+                const text = `Check out this event: ${title} ${subtitle} on SOC Events!`;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text);
+                    alert('Event info copied to clipboard!');
+                } else {
+                    alert(`Share this event: ${title} ${subtitle}`);
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function initializeEvents() {
+            const upcomingContainer = document.getElementById('upcoming-events');
+            const pastContainer = document.getElementById('past-events');
+
+            upcomingContainer.innerHTML = '';
+            pastContainer.innerHTML = '';
+
+            upcomingEvents.forEach(event => {
+                upcomingContainer.appendChild(createEventCard(event, false));
+            });
+
+            pastEvents.forEach(event => {
+                pastContainer.appendChild(createEventCard(event, true));
+            });
+        }
+
+        // Modal and event listeners
+        window.onclick = function(event) {
+            const modal = document.getElementById('eventModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) {
+                closeBtn.onclick = closeModal;
+            }
+            initializeEvents();
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
