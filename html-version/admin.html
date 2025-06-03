@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - SOC Events</title>
+    <meta name="description" content="SOC Events Admin Panel - Event Management">
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .admin-header {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #374151;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a3e635;
+        }
+
+        .admin-subtitle {
+            color: #d1d5db;
+            font-size: 0.875rem;
+        }
+
+        /* Main Container */
+        .admin-container {
+            max-width: 72rem;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(55, 65, 81, 0.8));
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: #a3e635;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-button {
+            width: 100%;
+            background: rgba(163, 230, 53, 0.1);
+            border: 2px solid rgba(163, 230, 53, 0.3);
+            color: #a3e635;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .sidebar-button:hover, .sidebar-button.active {
+            background: #a3e635;
+            color: #000;
+            border-color: #a3e635;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a3e635;
+        }
+
+        .stat-label {
+            color: #d1d5db;
+            font-size: 0.875rem;
+        }
+
+        /* Main Content */
+        .admin-main {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(55, 65, 81, 0.8));
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a3e635;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Event Form */
+        .event-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .event-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #f9fafb;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #a3e635;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        .form-select option {
+            background: #1f2937;
+            color: white;
+        }
+
+        .form-button {
+            background: #a3e635;
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .form-button:hover {
+            background: #84cc16;
+            transform: translateY(-2px);
+        }
+
+        .form-button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .form-button.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .form-button.danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .form-button.danger:hover {
+            background: #dc2626;
+        }
+
+        /* Events List */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .event-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .event-item:hover {
+            border-color: #a3e635;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-title {
+            font-weight: bold;
+            color: #a3e635;
+        }
+
+        .event-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .event-status.upcoming {
+            background: #10b981;
+            color: white;
+        }
+
+        .event-status.past {
+            background: #6b7280;
+            color: white;
+        }
+
+        .event-details {
+            color: #d1d5db;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-button.edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-button.edit:hover {
+            background: #2563eb;
+        }
+
+        .action-button.delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-button.delete:hover {
+            background: #dc2626;
+        }
+
+        .action-button.toggle {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .action-button.toggle:hover {
+            background: #d97706;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .message.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .message.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #1f2937;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid #374151;
+            width: 90%;
+            max-width: 32rem;
+            color: white;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #a3e635;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        /* Login Form */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-form {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(55, 65, 81, 0.8));
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 24rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #a3e635;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Export section */
+        .export-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .export-title {
+            color: #a3e635;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .code-block {
+            background: #000;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: #a3e635;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid rgba(163, 230, 53, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-form">
+            <h1 class="login-title">🔐 SOC Events Admin</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">Benutzername</label>
+                    <input type="text" id="username" class="form-input" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Passwort</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="form-button" style="width: 100%;">Anmelden</button>
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(163, 230, 53, 0.1); border-radius: 0.5rem; font-size: 0.875rem;">
+                    <strong>Demo-Zugangsdaten:</strong><br>
+                    Benutzername: admin<br>
+                    Passwort: socevents2025
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden">
+        <!-- Header -->
+        <header class="admin-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="admin-title">SOC Events Admin Panel</h1>
+                    <p class="admin-subtitle">Event-Management für deine Website</p>
+                </div>
+                <button onclick="logout()" class="form-button secondary">Abmelden</button>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <div class="admin-sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Navigation</h3>
+                    <button class="sidebar-button active" onclick="showSection('events')">📅 Events verwalten</button>
+                    <button class="sidebar-button" onclick="showSection('add-event')">➕ Event hinzufügen</button>
+                    <button class="sidebar-button" onclick="showSection('export')">📄 Code exportieren</button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Statistiken</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="upcomingCount">0</div>
+                            <div class="stat-label">Kommende Events</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="pastCount">0</div>
+                            <div class="stat-label">Vergangene Events</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Aktionen</h3>
+                    <button class="sidebar-button" onclick="window.open('index.html', '_blank')">🌐 Website anzeigen</button>
+                    <button class="sidebar-button" onclick="exportEvents()">💾 Events sichern</button>
+                    <button class="sidebar-button" onclick="importEvents()">📥 Events importieren</button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="admin-main">
+                <div id="message" class="message"></div>
+
+                <!-- Events Management -->
+                <div id="events-section" class="section active">
+                    <h2 class="section-title">Events verwalten</h2>
+                    <div id="eventsList" class="events-list">
+                        <!-- Events will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Add Event -->
+                <div id="add-event-section" class="section">
+                    <h2 class="section-title">Neues Event hinzufügen</h2>
+                    <form id="eventForm" class="event-form">
+                        <div class="form-group">
+                            <label for="eventTitle" class="form-label">Titel *</label>
+                            <input type="text" id="eventTitle" class="form-input" placeholder="z.B. Booster" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventSubtitle" class="form-label">Untertitel *</label>
+                            <input type="text" id="eventSubtitle" class="form-input" placeholder="z.B. 2025" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventVenue" class="form-label">Venue *</label>
+                            <input type="text" id="eventVenue" class="form-input" placeholder="z.B. S12" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventDate" class="form-label">Datum (kurz) *</label>
+                            <input type="text" id="eventDate" class="form-input" placeholder="z.B. Juho 1.22" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventPrice" class="form-label">Preis *</label>
+                            <input type="text" id="eventPrice" class="form-input" placeholder="z.B. 25" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventStatus" class="form-label">Status *</label>
+                            <input type="text" id="eventStatus" class="form-input" placeholder="z.B. Available" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventImage" class="form-label">Bild URL *</label>
+                            <input type="url" id="eventImage" class="form-input" placeholder="https://images.unsplash.com/..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventCardType" class="form-label">Kartenfarbe *</label>
+                            <select id="eventCardType" class="form-select" required>
+                                <option value="">Farbe wählen</option>
+                                <option value="blue">Blau</option>
+                                <option value="green">Grün</option>
+                                <option value="red">Rot</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventButtonStyle" class="form-label">Button-Stil *</label>
+                            <select id="eventButtonStyle" class="form-select" required>
+                                <option value="">Stil wählen</option>
+                                <option value="default">Standard (Lime)</option>
+                                <option value="dark">Dunkel</option>
+                                <option value="light">Hell</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventFullDate" class="form-label">Vollständiges Datum *</label>
+                            <input type="text" id="eventFullDate" class="form-input" placeholder="z.B. 1. Juli 2022" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventStartTime" class="form-label">Startzeit *</label>
+                            <input type="time" id="eventStartTime" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventEndTime" class="form-label">Endzeit *</label>
+                            <input type="time" id="eventEndTime" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventCategory" class="form-label">Kategorie *</label>
+                            <select id="eventCategory" class="form-select" required>
+                                <option value="">Kategorie wählen</option>
+                                <option value="Konzert">Konzert</option>
+                                <option value="Festival">Festival</option>
+                                <option value="Kulturell">Kulturell</option>
+                                <option value="Gala">Gala</option>
+                                <option value="Jazz">Jazz</option>
+                                <option value="Electronic">Electronic</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventAgeRestriction" class="form-label">Altersfreigabe *</label>
+                            <select id="eventAgeRestriction" class="form-select" required>
+                                <option value="">Altersfreigabe wählen</option>
+                                <option value="Alle Altersgruppen">Alle Altersgruppen</option>
+                                <option value="16+">16+</option>
+                                <option value="18+">18+</option>
+                                <option value="21+">21+</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventTicketsAvailable" class="form-label">Verfügbare Tickets *</label>
+                            <input type="number" id="eventTicketsAvailable" class="form-input" placeholder="z.B. 500" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventType" class="form-label">Event-Typ *</label>
+                            <select id="eventType" class="form-select" required>
+                                <option value="">Typ wählen</option>
+                                <option value="upcoming">Kommendes Event</option>
+                                <option value="past">Vergangenes Event</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="eventDescription" class="form-label">Beschreibung *</label>
+                            <textarea id="eventDescription" class="form-textarea" placeholder="Beschreibung des Events..." required></textarea>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <button type="submit" class="form-button">Event hinzufügen</button>
+                            <button type="button" class="form-button secondary" onclick="clearForm()">Formular leeren</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Export Section -->
+                <div id="export-section" class="section">
+                    <h2 class="section-title">Code exportieren</h2>
+                    <p style="color: #d1d5db; margin-bottom: 1.5rem;">
+                        Hier kannst du den aktualisierten JavaScript-Code für deine Website exportieren.
+                    </p>
+
+                    <div class="export-section">
+                        <h3 class="export-title">JavaScript für index.html</h3>
+                        <p style="color: #d1d5db; font-size: 0.875rem; margin-bottom: 1rem;">
+                            Ersetze die Event-Arrays in deiner index.html mit diesem Code:
+                        </p>
+                        <div class="code-block" id="exportCode">
+                            <!-- Code will be populated by JavaScript -->
+                        </div>
+                        <button class="form-button" onclick="copyToClipboard()">📋 Code kopieren</button>
+                        <button class="form-button secondary" onclick="downloadCode()">💾 Als Datei herunterladen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Event löschen</h3>
+                <span class="close" onclick="closeDeleteModal()">&times;</span>
+            </div>
+            <p style="margin-bottom: 1.5rem;">Bist du sicher, dass du dieses Event löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.</p>
+            <button id="confirmDelete" class="form-button danger">Löschen</button>
+            <button class="form-button secondary" onclick="closeDeleteModal()">Abbrechen</button>
+        </div>
+    </div>
+
+    <script>
+        // Admin Authentication
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'socevents2025';
+
+        // Event Storage
+        let events = {
+            upcoming: [],
+            past: []
+        };
+
+        // Load events from localStorage
+        function loadEvents() {
+            const stored = localStorage.getItem('socevents_admin_data');
+            if (stored) {
+                events = JSON.parse(stored);
+            } else {
+                // Default events
+                events = {
+                    upcoming: [
+                        {
+                            id: 1,
+                            title: "Booster",
+                            subtitle: "2025",
+                            venue: "S12",
+                            date: "Juho 1.22",
+                            price: "553",
+                            status: "Art",
+                            image: "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=400&q=80",
+                            cardType: 'blue',
+                            buttonStyle: 'default',
+                            description: "Ein unvergessliches Konzert-Erlebnis mit internationalen Künstlern und einer spektakulären Bühnenshow.",
+                            fullDate: "1. Juli 2022",
+                            startTime: "20:00",
+                            endTime: "02:00",
+                            category: "Konzert",
+                            ageRestriction: "18+",
+                            ticketsAvailable: 1250
+                        }
+                    ],
+                    past: [
+                        {
+                            id: 4,
+                            title: "Summer",
+                            subtitle: "Festival 2024",
+                            venue: "Stadtpark",
+                            date: "Aug 15.24",
+                            price: "75",
+                            status: "Sold Out",
+                            image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=80",
+                            cardType: 'blue',
+                            buttonStyle: 'default',
+                            description: "Ein unvergessliches Sommerfestival mit über 20 Künstlern aus verschiedenen Genres.",
+                            fullDate: "15. August 2024",
+                            startTime: "14:00",
+                            endTime: "02:00",
+                            category: "Festival",
+                            ageRestriction: "16+",
+                            ticketsAvailable: 0
+                        }
+                    ]
+                };
+                saveEvents();
+            }
+        }
+
+        // Save events to localStorage
+        function saveEvents() {
+            localStorage.setItem('socevents_admin_data', JSON.stringify(events));
+            updateStats();
+            updateExportCode();
+        }
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadEvents();
+                renderEvents();
+                updateStats();
+                updateExportCode();
+            } else {
+                showMessage('Ungültige Anmeldedaten', 'error');
+            }
+        });
+
+        // Logout
+        function logout() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Show section
+        function showSection(sectionName) {
+            // Update sidebar buttons
+            document.querySelectorAll('.sidebar-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show section
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionName + '-section').classList.add('active');
+        }
+
+        // Show message
+        function showMessage(text, type = 'success') {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type} show`;
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 5000);
+        }
+
+        // Add event
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const eventData = {
+                id: Date.now(),
+                title: document.getElementById('eventTitle').value,
+                subtitle: document.getElementById('eventSubtitle').value,
+                venue: document.getElementById('eventVenue').value,
+                date: document.getElementById('eventDate').value,
+                price: document.getElementById('eventPrice').value,
+                status: document.getElementById('eventStatus').value,
+                image: document.getElementById('eventImage').value,
+                cardType: document.getElementById('eventCardType').value,
+                buttonStyle: document.getElementById('eventButtonStyle').value,
+                description: document.getElementById('eventDescription').value,
+                fullDate: document.getElementById('eventFullDate').value,
+                startTime: document.getElementById('eventStartTime').value,
+                endTime: document.getElementById('eventEndTime').value,
+                category: document.getElementById('eventCategory').value,
+                ageRestriction: document.getElementById('eventAgeRestriction').value,
+                ticketsAvailable: parseInt(document.getElementById('eventTicketsAvailable').value)
+            };
+
+            const eventType = document.getElementById('eventType').value;
+
+            if (eventType === 'upcoming') {
+                events.upcoming.push(eventData);
+            } else {
+                events.past.push(eventData);
+                eventData.ticketsAvailable = 0; // Past events have no tickets available
+            }
+
+            saveEvents();
+            renderEvents();
+            clearForm();
+            showMessage('Event erfolgreich hinzugefügt!');
+        });
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('eventForm').reset();
+        }
+
+        // Render events
+        function renderEvents() {
+            const container = document.getElementById('eventsList');
+            container.innerHTML = '';
+
+            // Render upcoming events
+            if (events.upcoming.length > 0) {
+                const upcomingSection = document.createElement('div');
+                upcomingSection.innerHTML = '<h3 style="color: #a3e635; margin-bottom: 1rem;">Kommende Events</h3>';
+                container.appendChild(upcomingSection);
+
+                events.upcoming.forEach(event => {
+                    container.appendChild(createEventItem(event, 'upcoming'));
+                });
+            }
+
+            // Render past events
+            if (events.past.length > 0) {
+                const pastSection = document.createElement('div');
+                pastSection.innerHTML = '<h3 style="color: #a3e635; margin: 2rem 0 1rem 0;">Vergangene Events</h3>';
+                container.appendChild(pastSection);
+
+                events.past.forEach(event => {
+                    container.appendChild(createEventItem(event, 'past'));
+                });
+            }
+
+            if (events.upcoming.length === 0 && events.past.length === 0) {
+                container.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 2rem;">Noch keine Events vorhanden. Füge dein erstes Event hinzu!</p>';
+            }
+        }
+
+        // Create event item
+        function createEventItem(event, type) {
+            const item = document.createElement('div');
+            item.className = 'event-item';
+            item.innerHTML = `
+                <div class="event-header">
+                    <div class="event-title">${event.title} ${event.subtitle}</div>
+                    <div class="event-status ${type}">${type === 'upcoming' ? 'Kommend' : 'Vergangen'}</div>
+                </div>
+                <div class="event-details">
+                    <strong>Venue:</strong> ${event.venue} |
+                    <strong>Datum:</strong> ${event.fullDate} |
+                    <strong>Preis:</strong> €${event.price} |
+                    <strong>Kategorie:</strong> ${event.category}
+                </div>
+                <div class="event-actions">
+                    <button class="action-button edit" onclick="editEvent(${event.id}, '${type}')">Bearbeiten</button>
+                    <button class="action-button toggle" onclick="toggleEventType(${event.id}, '${type}')">${type === 'upcoming' ? 'Als vergangen markieren' : 'Als kommend markieren'}</button>
+                    <button class="action-button delete" onclick="deleteEvent(${event.id}, '${type}')">Löschen</button>
+                </div>
+            `;
+            return item;
+        }
+
+        // Edit event
+        function editEvent(id, type) {
+            const event = type === 'upcoming'
+                ? events.upcoming.find(e => e.id === id)
+                : events.past.find(e => e.id === id);
+
+            if (event) {
+                // Fill form with event data
+                document.getElementById('eventTitle').value = event.title;
+                document.getElementById('eventSubtitle').value = event.subtitle;
+                document.getElementById('eventVenue').value = event.venue;
+                document.getElementById('eventDate').value = event.date;
+                document.getElementById('eventPrice').value = event.price;
+                document.getElementById('eventStatus').value = event.status;
+                document.getElementById('eventImage').value = event.image;
+                document.getElementById('eventCardType').value = event.cardType;
+                document.getElementById('eventButtonStyle').value = event.buttonStyle;
+                document.getElementById('eventDescription').value = event.description;
+                document.getElementById('eventFullDate').value = event.fullDate;
+                document.getElementById('eventStartTime').value = event.startTime;
+                document.getElementById('eventEndTime').value = event.endTime;
+                document.getElementById('eventCategory').value = event.category;
+                document.getElementById('eventAgeRestriction').value = event.ageRestriction;
+                document.getElementById('eventTicketsAvailable').value = event.ticketsAvailable;
+                document.getElementById('eventType').value = type;
+
+                // Delete original event
+                deleteEventById(id, type);
+
+                // Switch to add event section
+                showSection('add-event');
+                document.querySelector('[onclick="showSection(\'add-event\')"]').classList.add('active');
+                document.querySelector('[onclick="showSection(\'events\')"]').classList.remove('active');
+
+                showMessage('Event zum Bearbeiten geladen. Änderungen vornehmen und speichern.');
+            }
+        }
+
+        // Toggle event type
+        function toggleEventType(id, currentType) {
+            const event = currentType === 'upcoming'
+                ? events.upcoming.find(e => e.id === id)
+                : events.past.find(e => e.id === id);
+
+            if (event) {
+                // Remove from current array
+                if (currentType === 'upcoming') {
+                    events.upcoming = events.upcoming.filter(e => e.id !== id);
+                    event.ticketsAvailable = 0; // Set to 0 for past events
+                    events.past.push(event);
+                } else {
+                    events.past = events.past.filter(e => e.id !== id);
+                    events.upcoming.push(event);
+                }
+
+                saveEvents();
+                renderEvents();
+                showMessage('Event-Typ erfolgreich geändert!');
+            }
+        }
+
+        // Delete event
+        let eventToDelete = null;
+        let eventTypeToDelete = null;
+
+        function deleteEvent(id, type) {
+            eventToDelete = id;
+            eventTypeToDelete = type;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            eventToDelete = null;
+            eventTypeToDelete = null;
+        }
+
+        document.getElementById('confirmDelete').addEventListener('click', function() {
+            if (eventToDelete && eventTypeToDelete) {
+                deleteEventById(eventToDelete, eventTypeToDelete);
+                saveEvents();
+                renderEvents();
+                closeDeleteModal();
+                showMessage('Event erfolgreich gelöscht!');
+            }
+        });
+
+        function deleteEventById(id, type) {
+            if (type === 'upcoming') {
+                events.upcoming = events.upcoming.filter(e => e.id !== id);
+            } else {
+                events.past = events.past.filter(e => e.id !== id);
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('upcomingCount').textContent = events.upcoming.length;
+            document.getElementById('pastCount').textContent = events.past.length;
+        }
+
+        // Export functionality
+        function updateExportCode() {
+            const code = `// Upcoming Events
+const upcomingEvents = ${JSON.stringify(events.upcoming, null, 2)};
+
+// Past Events
+const pastEvents = ${JSON.stringify(events.past, null, 2)};`;
+
+            document.getElementById('exportCode').textContent = code;
+        }
+
+        function copyToClipboard() {
+            const code = document.getElementById('exportCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showMessage('Code in Zwischenablage kopiert!');
+            }).catch(() => {
+                showMessage('Fehler beim Kopieren', 'error');
+            });
+        }
+
+        function downloadCode() {
+            const code = document.getElementById('exportCode').textContent;
+            const blob = new Blob([code], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'socevents-data.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showMessage('Code als Datei heruntergeladen!');
+        }
+
+        // Import/Export functions
+        function exportEvents() {
+            const data = JSON.stringify(events, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'socevents-backup.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showMessage('Events exportiert!');
+        }
+
+        function importEvents() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importedEvents = JSON.parse(e.target.result);
+                            events = importedEvents;
+                            saveEvents();
+                            renderEvents();
+                            showMessage('Events erfolgreich importiert!');
+                        } catch (error) {
+                            showMessage('Fehler beim Importieren der Datei', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target === modal) {
+                closeDeleteModal();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-focus username field
+            document.getElementById('username').focus();
+        });
+    </script>
+</body>
+</html>
